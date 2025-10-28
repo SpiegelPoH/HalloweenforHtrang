@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bí Ẩn Đầu Tiên Của Lễ Halloween</title>
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: url('https://i.pinimg.com/1200x/59/e5/4a/59e54a0eff9a67102aa45f6909569d39.jpg') center/cover no-repeat;
+  font-family: 'Courier New', monospace;
+  color: #fff;
+  overflow: hidden;
+  position: relative;
+  transition: background 1.5s ease;
+}
+body.fade-to-black {
+  background: black;
+}
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.chat-box {
+  position: absolute;
+  bottom: 2%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 1000px;
+  height: 35%;
+  background: rgba(15, 15, 15, 0.8);
+  border: 1.5px solid #ff884d;
+  border-radius: 14px 14px 0 0;
+  padding: 1.5%;
+  overflow-y: auto;
+  box-shadow: 0 -2px 25px rgba(255, 136, 77, 0.5);
+  z-index: 3;
+  backdrop-filter: blur(4px);
+}
+.message {
+  margin: 10px 0;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeIn 0.6s forwards;
+}
+.npc {
+  text-align: left;
+  color: #ff9100;
+  text-shadow: 0 0 8px #ff6f00, 0 0 20px #ff9100;
+  font-style: italic;
+  letter-spacing: 0.5px;
+}
+.player {
+  text-align: right;
+  color: #00ffff;
+  text-shadow: 0 0 6px #00bcd4, 0 0 12px #00ffff;
+  font-weight: 500;
+}
+.speaker {
+  font-weight: bold;
+  margin-bottom: 2px;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+.choices {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.choice {
+  background: rgba(40, 40, 40, 0.9);
+  color: #fff;
+  border: 1px solid #ff884d;
+  border-radius: 6px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: center;
+}
+.choice:hover {
+  background: #ff884d;
+  color: #000;
+  transform: scale(1.02);
+}
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.chat-box::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-box::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 136, 77, 0.6);
+  border-radius: 4px;
+}
+.chat-box::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+.fade-overlay {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  transition: background 1.5s ease;
+  z-index: 99;
+}
+.fadein-chat {
+  opacity: 0;
+  animation: appear 1s 1.5s forwards;
+  z-index: 100;
+}
+@keyframes appear {
+  to { opacity: 1; }
+}
+.flame {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 80px;
+  background: radial-gradient(circle at 50% 20%, orange 0%, red 70%, transparent 80%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: flicker 0.3s infinite alternate;
+  filter: blur(1px);
+}
+@keyframes flicker {
+  from { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+  to { transform: translate(-50%, -52%) scale(1.05); opacity: 1; }
+}
+.next-screen {
+  color: #ff9100;
+  font-size: 1.5rem;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.typing-indicator {
+  font-style: italic;
+  opacity: 0.6;
+  font-size: 0.85rem;
+  animation: blink 1s infinite;
+}
+@keyframes blink {
+  50% { opacity: 0.3; }
+}
+</style>
+</head>
+<body>
+<div class="overlay"></div>
+<div class="chat-box" id="chatBox"></div>
+
+<script>
+const story = {
+  start: {
+    speaker: "Lyra",
+    text: "Xin chào…, cậu bị lạc vào đây à?",
+    choices: [
+      { text: "Ừ, tớ thấy ở đây có căn nhà… mà cậu là ai?", next: "branch1" },
+      { text: "Tôi chỉ đang tìm chỗ trú qua đêm thôi, ở đây quỷ dị quá", next: "branch2" }
+    ]
+  },
+  branch1: {
+    text: "Tớ là Lyra. Ngày xưa tôi từng giữ đèn cho thị trấn này, trước khi ngọn lửa đó tắt đi.",
+    choices: [
+      { text: "Nghe như truyền thuyết ấy nhỉ, cậu định dọa tớ à?", next: "branch3" },
+      { text: "Ngọn lửa nào cơ, mà sao nó lại tắt đi?", next: "branch4" }
+    ]
+  },
+  branch2: {
+    text: "Cậu không nên ở đây lâu đâu. Đêm nay đèn trong căn nhà này tự sáng đấy.",
+    choices: [
+      { text: "Đèn tự sáng? Cậu đang đùa tớ à?", next: "branch3" },
+      { text: "Ý cậu đêm nay là đêm Halloween và cậu định dọa tớ à?", next: "branch4" }
+    ]
+  },
+  branch3: {
+    text: "Tớ không đùa đâu. Nay là đêm Halloween và mọi ngọn đèn đều sẽ được thắp sáng trở lại, chỉ là để tưởng nhớ về người canh giữ nó.",
+    choices: [
+      { text: "Và cậu cũng là một trong số đó, phải không?", next: "branch5" }
+    ]
+  },
+  branch4: {
+    text: "Cậu từng nghe về Jack O'Lantern chưa?",
+    choices: [
+      { text: "Jack O'Lantern, là chiếc đèn bí ngô trong Halloween đấy sao?", next: "branch5" },
+      { text: "Tớ từng nghe qua, đó là 1 truyền thuyết xứ Ireland,...", next: "branch6" }
+    ]
+  },
+  branch5: {
+    text: "Chính là như vậy. Tớ không làm hại cậu đâu. Tớ chỉ đang trông giữ một ngọn đèn chưa tìm được chủ mới... và tớ cũng là 1 hậu duệ của Jack.",
+    choices: [
+      { text: "Nghe cảm động thật. Vậy cậu muốn gì ở tớ?", next: "branch6" }
+    ]
+  },
+  branch6: {
+    text: "Uhmm, tớ cô đơn lắm. Ngọn lửa mà không có ai nhìn thấy, thì cũng chẳng khác gì là tro tàn.",
+    choices: [
+      { text: "Vậy là cậu muốn tớ thay thế cậu à?", next: "branch7" },
+      { text: "Thế giờ ngọn lửa ấy ở đâu?", next: "branch8" }
+    ]
+  },
+  branch7: {
+    text: "Tớ không ép cậu đâu, nhưng nếu cậu đủ dũng cảm, tớ sẽ trao nó cho cậu. Đừng sợ khi thấy mọi thứ mờ đi.",
+    choices: [
+      { text: "Ơ tớ chưa sẵn sàng.", next: "end3" }
+    ]
+  },
+  branch8: {
+    text: "Ngay tại đây này, tớ nghĩ nó đã chờ ai đó từ rất lâu rồi.",
+    choices: [
+      { text: "Tôi sẽ thử thắp nó lên.", next: "end1" },
+      { text: "Tôi nghĩ tốt hơn nên để yên nó.", next: "end2" }
+    ]
+  },
+  end1: {
+    text: "Ánh đèn vụt sáng, chiếu qua sương. Giọng Lyra khẽ vang: “Cảm ơn cậu… Ngọn lửa nhớ được nhìn thấy rồi.” 🌙",
+    choices: []
+  },
+  end2: {
+    text: "Cái bóng của Lyra bỗng biến mất, đồng thời là tiếng rít của gió. Cứ như là cô nàng bí ẩn đang khóc vậy.",
+    choices: []
+  },
+  end3: {
+    text: "Mọi thứ mờ dần, tôi bỗng ngất đi, ...",
+    choices: []
+  }
+};
+
+const chatBox = document.getElementById("chatBox");
+let skipTyping = false;
+
+async function typeText(element, text, speed = 30) {
+  element.textContent = "";
+  for (let i = 0; i < text.length; i++) {
+    if (skipTyping) {
+      element.textContent = text;
+      return;
+    }
+    element.textContent += text[i];
+    await new Promise(r => setTimeout(r, speed));
+  }
+}
+
+async function renderScene(sceneKey) {
+  const scene = story[sceneKey];
+  chatBox.innerHTML = "";
+
+  // Hiện typing indicator
+  const typingDiv = document.createElement("div");
+  typingDiv.className = "message npc typing-indicator";
+  typingDiv.textContent = `${scene.speaker || "..." } đang nhập...`;
+  chatBox.appendChild(typingDiv);
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  await new Promise(r => setTimeout(r, 1200));
+  typingDiv.remove();
+
+  // Hiện thoại NPC
+  const npcMsg = document.createElement("div");
+  npcMsg.className = "message npc";
+  npcMsg.innerHTML = `<div class="speaker">${scene.speaker || ""}</div><span class="typed"></span>`;
+  chatBox.appendChild(npcMsg);
+  const typedSpan = npcMsg.querySelector(".typed");
+
+  skipTyping = false;
+  document.addEventListener("click", () => skipTyping = true, { once: true });
+  await typeText(typedSpan, scene.text);
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  // Hiện lựa chọn
+  if (scene.choices && scene.choices.length > 0) {
+    const choiceContainer = document.createElement("div");
+    choiceContainer.className = "choices";
+
+    scene.choices.forEach(choice => {
+      const btn = document.createElement("div");
+      btn.className = "choice";
+      btn.textContent = choice.text;
+      btn.onclick = () => {
+        const playerMsg = document.createElement("div");
+        playerMsg.className = "message player";
+        playerMsg.textContent = choice.text;
+        chatBox.appendChild(playerMsg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        document.querySelectorAll(".choice").forEach(c => c.style.pointerEvents = "none");
+        setTimeout(() => renderScene(choice.next), 1000);
+      };
+      choiceContainer.appendChild(btn);
+    });
+
+    chatBox.appendChild(choiceContainer);
+  }
+
+  if (sceneKey.startsWith("end")) {
+    setTimeout(() => playEnding(sceneKey), 3500);
+  }
+}
+
+function playEnding(endKey) {
+  const overlay = document.createElement("div");
+  overlay.className = "fade-overlay";
+  document.body.appendChild(overlay);
+
+  setTimeout(() => {
+    document.body.classList.add("fade-to-black");
+    chatBox.style.display = "none";
+  }, 1000);
+
+  setTimeout(() => {
+    overlay.innerHTML = "";
+    const newChat = document.createElement("div");
+    newChat.className = "chat-box fadein-chat";
+    document.body.appendChild(newChat);
+
+    let messageText = "";
+    if (endKey === "end1") {
+      const flame = document.createElement("div");
+      flame.className = "flame";
+      overlay.appendChild(flame);
+      messageText = "Vậy là cậu đã chấp nhận lời đề nghị của tớ, cũng như đã giải đáp được bí ẩn của Jack O'Lantern. Giờ thì hãy đến với bí ẩn thứ hai.";
+    } else if (endKey === "end2") {
+      messageText = "Vậy à, cũng đành thôi, tớ cũng không ép cậu nữa. Giờ thì hãy đi tìm hiểu bí ẩn thứ 2 đi.";
+    } else if (endKey === "end3") {
+      messageText = "Tớ xin lỗi, dù gì thì ta cũng không gặp lại nhau nữa. Giờ thì hãy đi tìm hiểu bí ẩn thứ 2 đi.";
+    }
+
+    const msg = document.createElement("div");
+    msg.className = "message npc";
+    msg.textContent = messageText;
+    newChat.appendChild(msg);
+  }, 2500);
+
+  setTimeout(() => {
+    document.body.innerHTML = "<div class='next-screen'>Cảm ơn Htrang đã dành thời gian để trải nghiệm, vì 1 chút ván đề kỹ thuật, phần 2 sẽ sớm được tui thêm vào vào 1 dịp lần sau.</div>";
+  }, 7500);
+}
+
+renderScene("start");
+</script>
+</body>
+</html>
